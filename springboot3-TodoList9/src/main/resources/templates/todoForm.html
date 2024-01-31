@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ToDo List</title>
+<link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <div th:replace = "~{fragments::msg_area}"></div>
+  <!-- 入力フォーム -->
+  <form th:action="@{/}" method="post" th:object="${todoData}">
+    <!-- ToDO入力エリア -->
+    <table>
+      <!-- id -->
+      <tr>
+        <th>id</th>
+        <td>
+          <span th:text="*{id}"></span>
+          <!-- 更新 のために必要 -->
+          <input type="hidden" th:field="*{id}">
+        </td>
+      </tr>
+      <!-- 件名 -->
+      <tr>
+        <th th:text="#{label.title}"></th>
+        <td>
+          <input type="text" name="title" size="40" th:value="*{title}">
+          <div th:if="${#fields.hasErrors('title')}" th:errors="*{title}" th:errorclass="red"></div>
+        </td>
+      </tr>
+      <!-- 重要度 -->
+      <tr>
+        <th th:text="#{label.importance}"></th>
+        <td>
+          <input type="radio" value="1" th:field="*{importance}">
+          <span th:text="#{radio.high}"></span>
+          <input type="radio" value="0" th:field="*{importance}">
+          <span th:text="#{radio.low}"></span>
+          <div th:if="${#fields.hasErrors('importance')}" 
+               th:errors="*{importance}" th:errorclass="red"></div>
+        </td>
+      </tr>
+      <!-- 緊急度 -->
+      <tr>
+        <th th:text="#{label.urgency}"></th>
+        <td>
+          <select name="urgency">
+            <option value="-1" th:field="*{urgency}" th:text="#{option.none}"></option>
+            <option value="1" th:field="*{urgency}" th:text="#{option.high}"></option>
+            <option value="0" th:field="*{urgency}" th:text="#{option.low}"></option>
+          </select>
+          <div th:if="${#fields.hasErrors('urgency')}" th:errors="*{urgency}" th:errorclass="red"></div>
+        </td>
+      </tr>
+      <!-- 期限 -->
+      <tr>
+        <th th:text="#{label.deadline}"></th>
+        <td>
+          <input type="text" name="deadline" th:value="*{deadline}" placeholder="yyyy-mm-dd">
+          <div th:if="${#fields.hasErrors('deadline')}" th:errors="*{deadline}" th:errorclass="red"></div>
+        </td>
+      </tr>
+      <!-- チェック -->
+      <tr>
+        <th th:text="#{label.check}"></th>
+        <td>
+          <input type="checkbox" value="Y" th:field="*{done}">
+          <span th:text="#{text.done}"></span>
+          <input type="hidden" name="!done" value="N" />
+        </td>
+      </tr>
+    </table>
+    <!-- 更新時の操作ボタン -->
+    <div th:if="${session.mode == 'update'}">
+      <button type="submit" th:formaction="@{/todo/update}" th:text="#{button.update}"></button>
+      <button type="submit" th:formaction="@{/todo/delete}" th:text="#{button.delete}"></button>
+      <button type="submit" th:formaction="@{/todo/cancel}" th:text="#{button.cancel}"></button>
+    </div>
+    <!-- 新規追加時の操作ボタン -->
+    <div th:unless="${session.mode == 'update'}">
+      <button type="submit" th:formaction="@{/todo/create/do}" th:text="#{button.add}"></button>
+      <button type="submit" th:formaction="@{/todo/cancel}" th:text="#{button.cancel}"></button>
+    </div>
+  </form>
+</body>
+</html>
